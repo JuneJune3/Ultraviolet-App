@@ -1,1 +1,7 @@
-
+services:
+  - type: web
+    name: ultraviolet-app
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
