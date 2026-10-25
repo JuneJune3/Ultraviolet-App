@@ -1,7 +1,8 @@
+version: "1"
 services:
   - type: web
     name: ultraviolet-proxy-v1
     env: node
+    plan: free
     buildCommand: npm install
     startCommand: npm start
-    plan: free
