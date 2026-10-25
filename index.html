@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrivChromium Proxy Web Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+  <!-- Header / Navigation Bar -->
+  <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex items-center justify-between shadow-md">
+    <div class="flex items-center space-x-3">
+      <div class="bg-indigo-600 p-2 rounded-lg font-bold text-lg text-white">UV</div>
+      <h1 class="font-bold text-xl tracking-wide text-white">PrivChromium Client Web Browser</h1>
+    </div>
+    <div class="flex items-center space-x-4 text-xs font-semibold">
+      <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Client Routing Active
+      </span>
+      <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-full">
+        Unlimited Local Execution
+      </span>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-6 flex flex-col justify-center space-y-6">
+    <!-- URL Search & Controls -->
+    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-xl space-y-4">
+      <form id="proxyForm" class="flex gap-2">
+        <div class="relative flex-1">
+          <input 
+            type="text" 
+            id="urlInput" 
+            placeholder="Search with Google or enter a web URL (e.g. https://example.com)..." 
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 pl-11 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            required
+          />
+          <svg class="w-5 h-5 text-slate-500 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+        <button 
+          type="submit" 
+          class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-6 py-3 rounded-lg transition duration-200 flex items-center gap-2 shadow-lg shadow-indigo-600/30">
+          <span>Launch Session</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+          </svg>
+        </button>
+      </form>
+
+      <!-- Search Shortcuts -->
+      <div class="flex items-center space-x-2 text-xs text-slate-400 pt-1">
+        <span class="font-semibold text-slate-500">Quick Launch:</span>
+        <button onclick="launchPreset('https://www.google.com')" class="hover:text-indigo-400 bg-slate-900 px-2.5 py-1 rounded border border-slate-700 transition">Google</button>
+        <button onclick="launchPreset('https://www.wikipedia.org')" class="hover:text-indigo-400 bg-slate-900 px-2.5 py-1 rounded border border-slate-700 transition">Wikipedia</button>
+        <button onclick="launchPreset('https://duckduckgo.com')" class="hover:text-indigo-400 bg-slate-900 px-2.5 py-1 rounded border border-slate-700 transition">DuckDuckGo</button>
+      </div>
+    </div>
+
+    <!-- Active Proxy Viewer Frame -->
+    <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-2xl flex flex-col h-[550px]">
+      <div class="bg-slate-900/80 px-4 py-2 border-b border-slate-700 flex items-center justify-between text-xs text-slate-400">
+        <div class="flex items-center space-x-2">
+          <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+          <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+          <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+          <span id="activeUrlDisplay" class="ml-2 font-mono text-slate-400 truncate max-w-lg">No active session</span>
+        </div>
+        <button onclick="refreshFrame()" class="hover:text-white transition">Reload Frame</button>
+      </div>
+      <iframe id="proxyFrame" class="w-full flex-1 border-0 bg-white" src="about:blank"></iframe>
+    </div>
+  </main>
+
+  <script>
+    const form = document.getElementById('proxyForm');
+    const urlInput = document.getElementById('urlInput');
+    const proxyFrame = document.getElementById('proxyFrame');
+    const activeUrlDisplay = document.getElementById('activeUrlDisplay');
+
+    function processUrl(input) {
+      let target = input.trim();
+      if (!target.startsWith('http://') && !target.startsWith('https://')) {
+        if (target.includes('.') && !target.includes(' ')) {
+          target = 'https://' + target;
+        } else {
+          target = 'https://www.google.com/search?q=' + encodeURIComponent(target);
+        }
+      }
+      return target;
+    }
+
+    function loadSite(url) {
+      activeUrlDisplay.textContent = url;
+      proxyFrame.src = url;
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const finalUrl = processUrl(urlInput.value);
+      loadSite(finalUrl);
+    });
+
+    function launchPreset(url) {
+      urlInput.value = url;
+      loadSite(url);
+    }
+
+    function refreshFrame() {
+      if (proxyFrame.src && proxyFrame.src !== 'about:blank') {
+        proxyFrame.contentWindow.location.reload();
+      }
+    }
+  </script>
+</body>
+</html>
