@@ -28,4 +28,10 @@ The example uses [EpoxyTransport](https://github.com/MercuryWorkshop/EpoxyTransp
 
 You may also want to use [CurlTransport](https://github.com/MercuryWorkshop/CurlTransport), a different way of fetching encrypted data, or [Bare-Client](https://github.com/MercuryWorkshop/Bare-as-module3), the legacy (unencrypted!) transport.
 
-See the [bare-mux](https://github.com/MercuryWorkshop/bare-mux) documentation for more information.
+See the [bare-mux](https://github.com/MercuryWorkshop/bare-mux) documentation for more information. ---
+
+## 🚀 Deploy Your Own Free Server
+
+Click the button below to deploy your own private, dedicated instance of this proxy on Render:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/JuneJune3/Ultraviolet-App)
